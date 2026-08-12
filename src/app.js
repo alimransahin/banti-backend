@@ -1,12 +1,27 @@
 const express = require("express");
 const cors = require("cors");
+const connectDB = require("./config/db");
 
 const teacherRoutes = require("./routes/teacherRoutes");
 const noticeRoutes = require("./routes/noticeRoutes");
 
 const app = express();
 
-// Middleware
+// ================= DATABASE =================
+
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+    });
+  }
+});
+
+// ================= MIDDLEWARE =================
 
 app.use(
   cors({
@@ -17,9 +32,11 @@ app.use(
     ],
   }),
 );
+
 app.use(express.json());
 
-// Test route
+// ================= TEST =================
+
 app.get("/", (req, res) => {
   res.json({
     success: true,
@@ -27,7 +44,8 @@ app.get("/", (req, res) => {
   });
 });
 
-// Routes
+// ================= ROUTES =================
+
 app.use("/api/teachers", teacherRoutes);
 app.use("/api/notices", noticeRoutes);
 
