@@ -4,6 +4,8 @@ const connectDB = require("./config/db");
 
 const teacherRoutes = require("./routes/teacherRoutes");
 const noticeRoutes = require("./routes/noticeRoutes");
+const committeeRoutes = require("./routes/committeeRoutes");
+const administrationRoutes = require("./routes/administrationRoutes");
 
 const app = express();
 
@@ -48,5 +50,6 @@ app.get("/", (req, res) => {
 
 app.use("/api/teachers", teacherRoutes);
 app.use("/api/notices", noticeRoutes);
-
+app.use("/api/committees", committeeRoutes);
+app.use("/api/administrations", administrationRoutes);
 module.exports = app;

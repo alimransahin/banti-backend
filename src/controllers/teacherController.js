@@ -3,12 +3,41 @@ const cloudinary = require("../config/cloudinary");
 const uploadToCloudinary = require("../utils/uploadToCloudinary");
 
 // Get all teachers
+const designationOrder = [
+  "প্রধান শিক্ষক",
+  "সহকারী প্রধান শিক্ষক",
+  "সহকারী শিক্ষক",
+  "অফিস সহকারী কাম কম্পিউটার অপারেটর",
+  "কম্পিউটার ল্যাব অপারেটর",
+  "অফিস সহায়ক",
+  "নিরাপত্তা রক্ষী",
+  "পরিচ্ছন্নতা কর্মী",
+  "নৈশ প্রহরী",
+  "আয়া",
+];
+
 const getTeachers = async (req, res) => {
   try {
-    const teachers = await Teacher.find().sort({
-      index: 1,
-      createdAt: -1,
-    });
+    const teachers = await Teacher.aggregate([
+      {
+        $addFields: {
+          designationOrder: {
+            $indexOfArray: [designationOrder, "$designation"],
+          },
+        },
+      },
+      {
+        $sort: {
+          designationOrder: 1,
+          createdAt: -1,
+        },
+      },
+      {
+        $project: {
+          designationOrder: 0,
+        },
+      },
+    ]);
 
     res.json({
       success: true,
